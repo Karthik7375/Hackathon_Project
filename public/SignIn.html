@@ -1,0 +1,66 @@
+<!-- public/signin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="SignIn.css"> 
+    <title>Sign In</title>
+</head>
+<body>
+    <h1>Sign In</h1>
+    <form>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Sign In" onclick="Authenticate()">
+    </form>
+
+    <script>
+        function Authenticate() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Import the MongoDB Node.js driver
+            const MongoClient = require('mongodb').MongoClient;
+
+            // Connection URL
+            const url = 'mongodb://localhost:27017';
+
+            // Database Name
+            const dbName = 'mydatabase';
+
+            // Collection Name
+            const collectionName = 'users';
+
+            // Create a new MongoClient
+            MongoClient.connect(url, function(err, client) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log('Connected to MongoDB');
+
+                // Get the database and collection
+                const db = client.db(dbName);
+                const collection = db.collection(collectionName);
+
+                // Find the user document
+                collection.findOne({ username: username, password: password }, function(err, user) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    if (user) {
+                        console.log('User authenticated successfully!');
+                        // Redirect to a protected page or perform some action
+                    } else {
+                        console.log('Invalid username or password');
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
